@@ -5,12 +5,25 @@ import { ChatMessage } from "./components/MessageRenderer";
 import MessageList from "./components/MessageList";
 import ChatInput from "./components/ChatInput";
 import InitialView from "./components/InitialView";
+import { instrumental } from "@/lib/fonts";
+
+// Define the integration types
+type IntegrationType = "Notion" | "Gmail" | "Slack" | "Calendar" | "Whatsapp";
 
 export default function Home() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Default integrations list
+    const defaultIntegrations: IntegrationType[] = [
+        "Notion",
+        "Gmail",
+        "Slack",
+        "Calendar",
+        "Whatsapp",
+    ];
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -32,6 +45,7 @@ export default function Home() {
                 },
                 body: JSON.stringify({
                     messages: updatedMessages,
+                    integrations: defaultIntegrations,
                 }),
             });
 
@@ -57,14 +71,54 @@ export default function Home() {
         }
     };
 
-    const handleMessageSubmit = (message: string) => {
-        const submitEvent = new Event("submit", {
-            bubbles: true,
-            cancelable: true,
-        }) as unknown as FormEvent<HTMLFormElement>;
+    const handleMessageSubmit = (
+        message: string,
+        integrations: IntegrationType[]
+    ) => {
+        if (!message.trim() || isLoading) return;
 
-        setInput(message);
-        handleSubmit(submitEvent);
+        const newUserMessage: ChatMessage = { role: "user", content: message };
+        const updatedMessages = [...messages, newUserMessage];
+
+        setMessages(updatedMessages);
+        setIsLoading(true);
+        setError(null); // Clear previous errors
+
+        fetch("/api/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                messages: updatedMessages,
+                integrations: integrations,
+            }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    return response.json().then((errorData) => {
+                        throw new Error(
+                            errorData.detail || `Error: ${response.statusText}`
+                        );
+                    });
+                }
+                return response.json();
+            })
+            .then((data) => {
+                // The backend returns the full message list including the assistant's reply
+                setMessages(data.messages);
+            })
+            .catch((err) => {
+                console.error("Failed to send message:", err);
+                setError(
+                    err instanceof Error
+                        ? err.message
+                        : "An unknown error occurred."
+                );
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -76,16 +130,20 @@ export default function Home() {
     };
 
     const handlePromptClick = (promptText: string) => {
-        setInput(promptText);
-        const submitEvent = new Event("submit", {
-            bubbles: true,
-            cancelable: true,
-        }) as unknown as FormEvent<HTMLFormElement>;
-        handleSubmit(submitEvent);
+        handleMessageSubmit(promptText, defaultIntegrations);
     };
 
     return (
         <div className="flex flex-col h-screen bg-black text-white px-4">
+            {/* Header */}
+            <header className="py-4 border-b border-gray-800 text-center">
+                <h1
+                    className={`${instrumental.className} text-4xl font-bold tracking-wider`}
+                >
+                    Shiro
+                </h1>
+            </header>
+
             {messages.length === 0 ? (
                 // Initial state - centered search with heading
                 <InitialView
@@ -97,17 +155,21 @@ export default function Home() {
                     handlePromptClick={handlePromptClick}
                 />
             ) : (
-                // Chat interface - messages at top, input at bottom
+                // Chat interface - messages at top, input fixed at bottom
                 <>
-                    <MessageList
-                        messages={messages}
-                        isLoading={isLoading}
-                        error={error}
-                    />
-                    <ChatInput
-                        isLoading={isLoading}
-                        onSubmit={handleMessageSubmit}
-                    />
+                    <div className="flex-1 overflow-auto">
+                        <MessageList
+                            messages={messages}
+                            isLoading={isLoading}
+                            error={error}
+                        />
+                    </div>
+                    <div className="bg-black border-t border-gray-800">
+                        <ChatInput
+                            isLoading={isLoading}
+                            onSubmit={handleMessageSubmit}
+                        />
+                    </div>
                 </>
             )}
         </div>

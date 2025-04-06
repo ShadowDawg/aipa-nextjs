@@ -1,17 +1,14 @@
-import { FormEvent, useState } from "react";
-import {
-    FaArrowUp,
-    FaUser,
-    FaEnvelope,
-    FaFileAlt,
-    FaBrain,
-    FaSlack,
-    FaWhatsapp,
-} from "react-icons/fa";
-import { IoRefresh } from "react-icons/io5";
+import { FormEvent } from "react";
+import { FaUser, FaFileAlt, FaBrain, FaWhatsapp } from "react-icons/fa";
 import { LuImagePlus } from "react-icons/lu";
 import { AiOutlinePlus } from "react-icons/ai";
-import { SiNotion } from "react-icons/si";
+import { ArrowUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+import { colors } from "@/lib/styles/colors";
 
 interface InitialViewProps {
     input: string;
@@ -34,122 +31,123 @@ const InitialView = ({
         <div className="flex flex-col items-center justify-center h-full">
             <div className="w-full max-w-2xl">
                 <h1 className="text-5xl font-semibold mb-2">
-                    Hi there, <span className="text-purple-500">John</span>
+                    Hi there, <span className="text-[#ff3131]">Dev</span>
                 </h1>
                 <h2 className="text-5xl font-semibold mb-6">
                     What{" "}
-                    <span className="text-purple-500">would like to know?</span>
+                    <span className="text-[#ff3131]">
+                        would you like to do?
+                    </span>
                 </h2>
-                <p className="text-gray-400 mb-6">
-                    Use one of the most common prompts below or use your own to
-                    begin
-                </p>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div
-                        className="flex flex-col items-center p-4 bg-gray-800 bg-opacity-40 rounded-lg cursor-pointer hover:bg-opacity-60"
+                <div className="grid grid-cols-4 gap-4 mb-8">
+                    <Card
+                        style={{ backgroundColor: colors.blackLight }}
+                        className="bg-vivid-500 hover:bg-gray-600 cursor-pointer border-0"
                         onClick={() =>
-                            handlePromptClick(
-                                "Create a filter in Gmail to organize my promotional emails into a separate folder"
-                            )
+                            handlePromptClick("Summarise my last 3 emails.")
                         }
                     >
-                        <FaEnvelope className="text-red-500 mb-3" size={24} />
-                        <div className="text-sm text-center">
-                            Create a filter in Gmail to organize my promotional
-                            emails
-                        </div>
-                    </div>
-                    <div
-                        className="flex flex-col items-center p-4 bg-gray-800 bg-opacity-40 rounded-lg cursor-pointer hover:bg-opacity-60"
+                        <CardContent className="flex flex-col items-center justify-center p-3 h-24">
+                            <div className="relative w-6 h-6 mb-2">
+                                <Image
+                                    src="/gmail-logo.png"
+                                    alt="Gmail"
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
+                            <div className="text-xs text-center text-white">
+                                Summarise my emails from today.
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card
+                        style={{ backgroundColor: colors.blackLight }}
+                        className="hover:bg-gray-600 cursor-pointer border-0"
                         onClick={() =>
                             handlePromptClick(
                                 "Set up a Notion database to track my daily tasks and projects"
                             )
                         }
                     >
-                        <SiNotion className="text-white mb-3" size={24} />
-                        <div className="text-sm text-center">
-                            Set up a Notion database to track my daily tasks and
-                            projects
-                        </div>
-                    </div>
-                    <div
-                        className="flex flex-col items-center p-4 bg-gray-800 bg-opacity-40 rounded-lg cursor-pointer hover:bg-opacity-60"
-                        onClick={() =>
-                            handlePromptClick(
-                                "Create an automated Slack reminder for my team's weekly meetings"
-                            )
-                        }
-                    >
-                        <FaSlack className="mb-3" size={24} />
-                        <div className="text-sm text-center">
-                            Create an automated Slack reminder for my team's
-                            weekly meetings
-                        </div>
-                    </div>
-                    <div
-                        className="flex flex-col items-center p-4 bg-gray-800 bg-opacity-40 rounded-lg cursor-pointer hover:bg-opacity-60"
-                        onClick={() =>
-                            handlePromptClick(
-                                "Set up automatic responses for common WhatsApp business inquiries"
-                            )
-                        }
-                    >
-                        <FaWhatsapp className="text-green-500 mb-3" size={24} />
-                        <div className="text-sm text-center">
-                            Set up automatic responses for common WhatsApp
-                            business inquiries
-                        </div>
-                    </div>
-                </div>
+                        <CardContent className="flex flex-col items-center justify-center p-3 h-24">
+                            <div className="relative w-6 h-6 mb-2">
+                                <Image
+                                    src="/notion-logo.png"
+                                    alt="Notion"
+                                    fill
+                                    className="object-contain brightness-0 invert"
+                                />
+                            </div>
+                            <div className="text-xs text-center text-white">
+                                Set up a Notion database
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                <div className="flex items-center justify-center mb-8">
-                    <button className="flex items-center text-gray-400 hover:text-white">
-                        <IoRefresh className="mr-2" size={18} />
-                        Refresh Prompts
-                    </button>
+                    <Card
+                        style={{ backgroundColor: colors.blackLight }}
+                        className="hover:bg-gray-600 cursor-pointer border-0"
+                        onClick={() =>
+                            handlePromptClick("Send a banger joke on #general")
+                        }
+                    >
+                        <CardContent className="flex flex-col items-center justify-center p-3 h-24">
+                            <div className="relative w-6 h-6 mb-2">
+                                <Image
+                                    src="/slack-logo.png"
+                                    alt="Slack"
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
+                            <div className="text-xs text-center text-white">
+                                Send a banger joke on #general
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card
+                        style={{ backgroundColor: colors.blackLight }}
+                        className="hover:bg-gray-600 cursor-pointer border-0"
+                        onClick={() => handlePromptClick("Schedule a meeting")}
+                    >
+                        <CardContent className="flex flex-col items-center justify-center p-3 h-24">
+                            <div className="relative w-6 h-6 mb-2">
+                                <Image
+                                    src="/calendar-logo.png"
+                                    alt="Calendar"
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
+                            <div className="text-xs text-center text-white">
+                                Schedule a meeting
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
 
                 <form onSubmit={handleSubmit} className="w-full">
                     <div className="relative border border-gray-700 rounded-xl overflow-hidden">
-                        <textarea
+                        <Textarea
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            className="w-full bg-transparent px-4 py-4 h-24 resize-none focus:outline-none"
-                            placeholder="Ask whatever you want...."
-                            disabled={isLoading}
+                            className="w-full bg-transparent px-4 py-4 h-32 text-base md:text-lg lg:text-xl resize-none focus:outline-none focus-visible:ring-0 border-0"
+                            placeholder="Ask away"
                         />
                         <div className="absolute bottom-4 right-4 flex items-center space-x-4">
-                            <div className="text-gray-400 mr-4">0/1000</div>
-                            <button
-                                type="button"
-                                className="text-gray-400 hover:text-white transition-colors"
-                                disabled={isLoading}
-                            >
-                                <AiOutlinePlus size={20} />
-                                <span className="sr-only">Add Attachment</span>
-                            </button>
-                            <button
-                                type="button"
-                                className="text-gray-400 hover:text-white transition-colors"
-                                disabled={isLoading}
-                            >
-                                <LuImagePlus size={20} />
-                                <span className="sr-only">Use Image</span>
-                            </button>
-                            <button
+                            <Button
                                 type="submit"
-                                className={`text-white bg-purple-600 hover:bg-purple-700 rounded-lg p-2 transition-colors ${
-                                    isLoading
-                                        ? "opacity-50 cursor-not-allowed"
-                                        : ""
-                                }`}
+                                className="bg-[#ff3131] hover:bg-[#ff3131] rounded-lg p-2"
                                 disabled={isLoading}
+                                size="icon"
                             >
-                                <FaArrowUp size={16} />
-                            </button>
+                                <ArrowUp className="h-4 w-4 text-black" />
+                            </Button>
                         </div>
                     </div>
                 </form>

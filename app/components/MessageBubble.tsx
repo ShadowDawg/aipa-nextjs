@@ -17,7 +17,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
 
     return (
         <div className="flex mb-4">
-            <div className="text-white max-w-[80%]">
+            <div className="text-white max-w-[90%] w-full">
                 <MessageRenderer message={message} />
             </div>
         </div>

@@ -1,5 +1,9 @@
 import { ChatMessage } from "./MessageRenderer";
 import MessageBubble from "./MessageBubble";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 interface MessageListProps {
     messages: ChatMessage[];
@@ -8,8 +12,19 @@ interface MessageListProps {
 }
 
 const MessageList = ({ messages, isLoading, error }: MessageListProps) => {
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    // Scroll to bottom when messages change or when loading state changes
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, isLoading]);
+
     return (
-        <div className="flex-1 overflow-y-auto py-4">
+        <div className="h-full overflow-auto py-4">
             <div className="w-full max-w-2xl mx-auto">
                 {messages.map((msg, index) => (
                     <MessageBubble key={index} message={msg} />
@@ -33,11 +48,15 @@ const MessageList = ({ messages, isLoading, error }: MessageListProps) => {
                 )}
 
                 {error && (
-                    <div className="mb-2 p-3 rounded-lg bg-red-900 text-red-200 text-left">
-                        <span className="font-semibold">Error: </span>
-                        {error}
-                    </div>
+                    <Alert variant="destructive" className="mb-2">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
                 )}
+
+                {/* Invisible element to scroll to */}
+                <div ref={messagesEndRef} />
             </div>
         </div>
     );

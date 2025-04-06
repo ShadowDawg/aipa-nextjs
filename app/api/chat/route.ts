@@ -11,7 +11,7 @@ interface ChatMessage {
 // Define the expected structure for the request body
 interface InvokeRequest {
     messages: ChatMessage[];
-    web_search?: boolean;
+    integrations?: string[];
 }
 
 // Define the expected structure for the response from the Python backend
@@ -27,7 +27,7 @@ const PYTHON_BACKEND_URL =
 export async function POST(request: NextRequest) {
     try {
         const body: InvokeRequest = await request.json();
-        const { messages, web_search } = body;
+        const { messages, integrations } = body;
 
         if (!messages || !Array.isArray(messages)) {
             return NextResponse.json(
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
                 "Content-Type": "application/json",
                 Accept: "application/json", // Ensure we expect JSON back
             },
-            body: JSON.stringify({ messages, web_search }), // Send the messages and web_search flag
+            body: JSON.stringify({ messages, integrations }), // Include integrations in the request
         });
 
         // Check if the backend response is successful
